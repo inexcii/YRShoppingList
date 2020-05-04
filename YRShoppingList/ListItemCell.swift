@@ -8,28 +8,16 @@
 
 import UIKit
 
-protocol ListItemCellDelegate: class {
-    func didTapCheckButton()
-}
-
 class ListItemCell: UICollectionViewCell {
 
     @IBOutlet private weak var checkButton: UIButton!
     @IBOutlet private weak var quantityLabel: UILabel!
     @IBOutlet private weak var textField: UITextField!
 
-    weak var delegate: ListItemCellDelegate?
     var didSaveItemHandler: ((Item) -> Void)?
+    var showNameInputAlertHandler: (() -> Void)?
 
-    private var item: Item? {
-        didSet {
-            guard let item = item else {
-                print("no item to save")
-                return
-            }
-            didSaveItemHandler?(item)
-        }
-    }
+    private var item: Item!
 
     private var isChecked: Bool = false {
         didSet {
@@ -76,24 +64,43 @@ class ListItemCell: UICollectionViewCell {
     }
 
     @IBAction func checkButtonTapped(_ sender: Any) {
+        guard self.item.name.isEmpty == false else {
+            showNameInputAlertHandler?()
+            return
+        }
+
         isChecked = !isChecked
 
         if textField.canResignFirstResponder {
             resignKeyboardAndSaveName()
         }
 
-        self.delegate?.didTapCheckButton()
+        didSaveItemHandler?(self.item)
     }
 
     @IBAction func plusButtonTapped(_ sender: Any) {
+        guard self.item.name.isEmpty == false else {
+            showNameInputAlertHandler?()
+            return
+        }
+
         quantity += 1
         quantityLabel.text = "\(quantity)"
+
+        didSaveItemHandler?(self.item)
     }
 
     @IBAction func minusButtonTapped(_ sender: Any) {
+        guard self.item.name.isEmpty == false else {
+            showNameInputAlertHandler?()
+            return
+        }
         guard quantity > 1 else { return }
+
         quantity -= 1
         quantityLabel.text = "\(quantity)"
+
+        didSaveItemHandler?(self.item)
     }
 
 }
@@ -102,6 +109,7 @@ extension ListItemCell: UITextFieldDelegate {
 
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         resignKeyboardAndSaveName()
+        didSaveItemHandler?(self.item)
         return true
     }
 }
@@ -129,3 +137,5 @@ extension String {
         return attributeString
     }
 }
+
+
