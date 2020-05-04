@@ -10,7 +10,6 @@ import UIKit
 
 protocol ListItemCellDelegate: class {
     func didTapCheckButton()
-
 }
 
 class ListItemCell: UICollectionViewCell {
@@ -20,17 +19,40 @@ class ListItemCell: UICollectionViewCell {
     @IBOutlet private weak var textField: UITextField!
 
     weak var delegate: ListItemCellDelegate?
+    var didSaveItemHandler: ((Item) -> Void)?
 
-    enum CheckState {
-        case blank, checked
-    }
-    private var checkedState: CheckState = .blank {
+    private var item: Item? {
         didSet {
-            textField.isEnabled = checkedState == .blank
+            guard let item = item else {
+                print("no item to save")
+                return
+            }
+            didSaveItemHandler?(item)
         }
     }
 
-    private var quantity: Int = 1
+    private var isChecked: Bool = false {
+        didSet {
+            textField.isEnabled = !isChecked
+
+            if isChecked {
+                checkButton.setBackgroundImage(UIImage(systemName: "checkmark.square"), for: .normal)
+                textField.attributedText = textField.text?.strikeThroughStyle()
+            } else {
+                checkButton.setBackgroundImage(UIImage(systemName: "square"), for: .normal)
+                textField.text = textField.text
+            }
+
+            item?.isChecked = isChecked
+        }
+    }
+
+    private var quantity: Int = 0 {
+        didSet {
+            quantityLabel.text = "\(quantity)"
+            item?.quantity = quantity
+        }
+    }
 
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -41,25 +63,23 @@ class ListItemCell: UICollectionViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
 
-        checkedState = .blank
+        textField.text = ""
         quantity = 1
-        checkButton.setBackgroundImage(UIImage(systemName: "square"), for: .normal)
-        quantityLabel.text = "\(quantity)"
+        isChecked = false
+    }
+
+    func configure(item: Item) {
+        textField.text = item.name
+        quantity = item.quantity
+        isChecked = item.isChecked
+        self.item = item
     }
 
     @IBAction func checkButtonTapped(_ sender: Any) {
-        if textField.canResignFirstResponder {
-            textField.resignFirstResponder()
-        }
+        isChecked = !isChecked
 
-        if checkedState == .blank {
-            checkButton.setBackgroundImage(UIImage(systemName: "checkmark.square"), for: .normal)
-            checkedState = .checked
-            textField.attributedText = textField.text?.strikeThroughStyle()
-        } else {
-            checkButton.setBackgroundImage(UIImage(systemName: "square"), for: .normal)
-            checkedState = .blank
-            textField.text = textField.text
+        if textField.canResignFirstResponder {
+            resignKeyboardAndSaveName()
         }
 
         self.delegate?.didTapCheckButton()
@@ -81,8 +101,20 @@ class ListItemCell: UICollectionViewCell {
 extension ListItemCell: UITextFieldDelegate {
 
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
+        resignKeyboardAndSaveName()
         return true
+    }
+}
+
+extension ListItemCell {
+
+    private func resignKeyboardAndSaveName() {
+        textField.resignFirstResponder()
+        guard let name = textField.text else {
+            print("not save name with nil in the textField")
+            return
+        }
+        item?.name = name
     }
 }
 

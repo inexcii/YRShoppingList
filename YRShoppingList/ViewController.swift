@@ -12,6 +12,8 @@ class ViewController: UIViewController {
 
     @IBOutlet weak var collectionView: UICollectionView!
 
+    var items = [Item]()
+
     private let reuseIdentifier = "CustomCell"
 
     override func viewDidLoad() {
@@ -26,7 +28,8 @@ class ViewController: UIViewController {
 extension ViewController: UICollectionViewDataSource {
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 50
+        guard items.count > 0 else { return 1 }
+        return items.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -35,6 +38,24 @@ extension ViewController: UICollectionViewDataSource {
 
         if let cell = cell as? ListItemCell {
             // Configure the cell
+
+            var original: Item
+            if items.count > 0 {
+                original = items[indexPath.row]
+            } else {
+                original = Item(name: "", isChecked: false, quantity: 1)
+            }
+
+            cell.configure(item: original)
+            cell.didSaveItemHandler = { [weak self] item in
+                guard let self = self else { return }
+                let firstIndex = self.items.firstIndex { $0 == original }
+                if let index  = firstIndex, index >= 0 {
+                    self.items[index] = item
+                } else {
+                    self.items.append(item)
+                }
+            }
         }
 
         return cell
