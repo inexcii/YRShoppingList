@@ -13,28 +13,28 @@ class ViewController: UIViewController {
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var deleteButton: UIBarButtonItem!
 
-//    var items = [Item]()
+    var items = [Item]()
 
     // for debug
-    var items = [
-        Item(name: "1", isChecked: false, quantity: 1),
-        Item(name: "2", isChecked: false, quantity: 2),
-        Item(name: "3", isChecked: true, quantity: 3),
-        Item(name: "4", isChecked: false, quantity: 4),
-        Item(name: "5", isChecked: false, quantity: 5),
-        Item(name: "6", isChecked: false, quantity: 6),
-        Item(name: "7", isChecked: true, quantity: 7),
-        Item(name: "8", isChecked: false, quantity: 8),
-        Item(name: "9", isChecked: false, quantity: 9),
-        Item(name: "10", isChecked: false, quantity: 10),
-        Item(name: "11", isChecked: true, quantity: 11),
-        Item(name: "12", isChecked: false, quantity: 12),
-        Item(name: "13", isChecked: false, quantity: 13),
-        Item(name: "14", isChecked: false, quantity: 14),
-        Item(name: "15", isChecked: true, quantity: 15),
-        Item(name: "16", isChecked: false, quantity: 16),
-        Item(name: "17", isChecked: false, quantity: 17),
-    ]
+//    var items = [
+//        Item(name: "1", isChecked: false, quantity: 1),
+//        Item(name: "2", isChecked: false, quantity: 2),
+//        Item(name: "3", isChecked: true, quantity: 3),
+//        Item(name: "4", isChecked: false, quantity: 4),
+//        Item(name: "5", isChecked: false, quantity: 5),
+//        Item(name: "6", isChecked: false, quantity: 6),
+//        Item(name: "7", isChecked: true, quantity: 7),
+//        Item(name: "8", isChecked: false, quantity: 8),
+//        Item(name: "9", isChecked: false, quantity: 9),
+//        Item(name: "10", isChecked: false, quantity: 10),
+//        Item(name: "11", isChecked: true, quantity: 11),
+//        Item(name: "12", isChecked: false, quantity: 12),
+//        Item(name: "13", isChecked: false, quantity: 13),
+//        Item(name: "14", isChecked: false, quantity: 14),
+//        Item(name: "15", isChecked: true, quantity: 15),
+//        Item(name: "16", isChecked: false, quantity: 16),
+//        Item(name: "17", isChecked: false, quantity: 17),
+//    ]
 
     private let reuseIdentifier = "CustomCell"
 
@@ -51,6 +51,8 @@ class ViewController: UIViewController {
         let notificationCenter = NotificationCenter.default
         notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: UIResponder.keyboardWillHideNotification, object: nil)
         notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
+
+        items = getData()
     }
 
     override func setEditing(_ editing: Bool, animated: Bool) {
@@ -74,6 +76,7 @@ class ViewController: UIViewController {
             let selectedItems = selectedCells.map { $0.item }.sorted().reversed()
             for selectedItem in selectedItems {
                 items.remove(at: selectedItem)
+                saveData()
             }
             collectionView.deleteItems(at: selectedCells)
             deleteButton.isEnabled = false
@@ -113,6 +116,7 @@ extension ViewController: UICollectionViewDataSource {
                 } else {
                     self.items.append(item)
                 }
+                self.saveData()
                 self.collectionView.reloadData()
             }
             cell.showNameInputAlertHandler = { [weak self] in
@@ -177,6 +181,7 @@ extension ViewController: UICollectionViewDropDelegate {
                 items.insert(item, at: destinationIndexPath.row)
                 collectionView.deleteItems(at: [sourceIndexPath])
                 collectionView.insertItems(at: [destinationIndexPath])
+                saveData()
             }, completion: { _ in
                 coordinator.drop(dropItem.dragItem,
                                  toItemAt: destinationIndexPath)
@@ -220,5 +225,15 @@ extension ViewController {
         }
 
         collectionView.scrollIndicatorInsets = collectionView.contentInset
+    }
+
+    private func saveData() {
+        UserDefaults.standard.set(try? PropertyListEncoder().encode(items), forKey: "UserDefaults_items")
+    }
+    private func getData() -> [Item] {
+        guard let decoded = UserDefaults.standard.object(forKey: "UserDefaults_items") as? Data,
+            let items = try? PropertyListDecoder().decode([Item].self, from: decoded)
+            else { return [Item]() }
+        return items
     }
 }

@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct Item: Equatable, Hashable {
+struct Item: Equatable, Hashable, Codable {
 
     var name: String
     var isChecked: Bool
