@@ -12,14 +12,40 @@ class ViewController: UIViewController {
 
     @IBOutlet weak var collectionView: UICollectionView!
 
-    var items = [Item]()
+//    var items = [Item]()
+
+    // for debug
+    var items = [
+        Item(name: "1", isChecked: false, quantity: 1),
+        Item(name: "2", isChecked: false, quantity: 2),
+        Item(name: "3", isChecked: true, quantity: 3),
+        Item(name: "4", isChecked: false, quantity: 4),
+        Item(name: "5", isChecked: false, quantity: 5),
+        Item(name: "6", isChecked: false, quantity: 6),
+        Item(name: "7", isChecked: true, quantity: 7),
+        Item(name: "8", isChecked: false, quantity: 8),
+        Item(name: "9", isChecked: false, quantity: 9),
+        Item(name: "10", isChecked: false, quantity: 10),
+        Item(name: "11", isChecked: true, quantity: 11),
+        Item(name: "12", isChecked: false, quantity: 12),
+        Item(name: "13", isChecked: false, quantity: 13),
+        Item(name: "14", isChecked: false, quantity: 14),
+        Item(name: "15", isChecked: true, quantity: 15),
+        Item(name: "16", isChecked: false, quantity: 16),
+        Item(name: "17", isChecked: false, quantity: 17),
+    ]
 
     private let reuseIdentifier = "CustomCell"
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        navigationItem.leftBarButtonItem = editButtonItem
+
         collectionView.register(UINib(nibName: "ListItemCell", bundle: nil), forCellWithReuseIdentifier: "CustomCell")
+        collectionView.dragInteractionEnabled = true
+        collectionView.dragDelegate = self
+        collectionView.dropDelegate = self
 
         let notificationCenter = NotificationCenter.default
         notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: UIResponder.keyboardWillHideNotification, object: nil)
@@ -80,6 +106,50 @@ extension ViewController: UICollectionViewDelegateFlowLayout {
         return CGSize(width: self.view.frame.width,
                       height: 60.0)
     }
+}
+
+extension ViewController: UICollectionViewDragDelegate {
+
+    func collectionView(_ collectionView: UICollectionView,
+                        itemsForBeginning session: UIDragSession,
+                        at indexPath: IndexPath) -> [UIDragItem] {
+        let item = items[indexPath.row]
+        guard item.name.isEmpty == false else { return [] }
+        let itemObject = NSItemProvider(object: item.name as NSString)
+        let dragItem = UIDragItem(itemProvider: itemObject)
+        return [dragItem]
+    }
+}
+
+extension ViewController: UICollectionViewDropDelegate {
+    func collectionView(_ collectionView: UICollectionView, performDropWith coordinator: UICollectionViewDropCoordinator) {
+        guard let destinationIndexPath = coordinator.destinationIndexPath else { return }
+
+        coordinator.items.forEach { dropItem in
+            guard let sourceIndexPath = dropItem.sourceIndexPath else { return }
+            collectionView.performBatchUpdates({
+                let item = items[sourceIndexPath.row]
+                items.remove(at: sourceIndexPath.row)
+                items.insert(item, at: destinationIndexPath.row)
+                collectionView.deleteItems(at: [sourceIndexPath])
+                collectionView.insertItems(at: [destinationIndexPath])
+            }, completion: { _ in
+                coordinator.drop(dropItem.dragItem,
+                                 toItemAt: destinationIndexPath)
+            })
+        }
+    }
+
+    func collectionView(_ collectionView: UICollectionView, dropSessionDidUpdate session: UIDropSession, withDestinationIndexPath destinationIndexPath: IndexPath?) -> UICollectionViewDropProposal {
+        return UICollectionViewDropProposal( operation: .move,
+                                             intent: .insertAtDestinationIndexPath)
+    }
+
+    func collectionView(_ collectionView: UICollectionView, canHandle session: UIDropSession) -> Bool {
+        return true
+    }
+
+
 }
 
 extension ViewController {
