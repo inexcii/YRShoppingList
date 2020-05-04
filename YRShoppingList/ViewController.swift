@@ -11,6 +11,7 @@ import UIKit
 class ViewController: UIViewController {
 
     @IBOutlet weak var collectionView: UICollectionView!
+    @IBOutlet weak var deleteButton: UIBarButtonItem!
 
 //    var items = [Item]()
 
@@ -52,6 +53,33 @@ class ViewController: UIViewController {
         notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
     }
 
+    override func setEditing(_ editing: Bool, animated: Bool) {
+        super.setEditing(editing, animated: animated)
+
+        collectionView.allowsMultipleSelection = editing
+        let indexPaths = collectionView.indexPathsForVisibleItems
+        for indexPath in indexPaths {
+            if let cell = collectionView.cellForItem(at: indexPath) as? ListItemCell {
+                cell.isInEditingMode = editing
+            }
+        }
+
+        if editing == false {
+            deleteButton.isEnabled = false
+        }
+    }
+
+    @IBAction func deleteItem(_ sender: Any) {
+        if let selectedCells = collectionView.indexPathsForSelectedItems {
+            let selectedItems = selectedCells.map { $0.item }.sorted().reversed()
+            for selectedItem in selectedItems {
+                items.remove(at: selectedItem)
+            }
+            collectionView.deleteItems(at: selectedCells)
+            deleteButton.isEnabled = false
+        }
+    }
+
 }
 
 extension ViewController: UICollectionViewDataSource {
@@ -91,6 +119,8 @@ extension ViewController: UICollectionViewDataSource {
                 guard let self = self else { return }
                 self.showNeedToInputNameAlert()
             }
+
+            cell.isInEditingMode = isEditing
         }
 
         return cell
@@ -98,6 +128,20 @@ extension ViewController: UICollectionViewDataSource {
 }
 
 extension ViewController: UICollectionViewDelegate {
+
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if !isEditing {
+            deleteButton.isEnabled = false
+        } else {
+            deleteButton.isEnabled = true
+        }
+    }
+
+    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+        if let selectedItems = collectionView.indexPathsForSelectedItems, selectedItems.count == 0 {
+            deleteButton.isEnabled = false
+        }
+    }
 }
 
 extension ViewController: UICollectionViewDelegateFlowLayout {

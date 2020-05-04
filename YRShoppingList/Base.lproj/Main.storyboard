@@ -50,9 +50,16 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
-                    <navigationItem key="navigationItem" title="リスト" id="vo2-fF-Gdk"/>
+                    <navigationItem key="navigationItem" title="リスト" id="vo2-fF-Gdk">
+                        <barButtonItem key="rightBarButtonItem" enabled="NO" systemItem="trash" id="aoT-DQ-N7O">
+                            <connections>
+                                <action selector="deleteItem:" destination="BYZ-38-t0r" id="aNC-ZC-OVd"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="collectionView" destination="OyX-kj-Esy" id="2g9-9V-og8"/>
+                        <outlet property="deleteButton" destination="aoT-DQ-N7O" id="roi-qs-KIJ"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

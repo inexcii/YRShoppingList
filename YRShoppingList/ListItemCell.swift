@@ -17,6 +17,24 @@ class ListItemCell: UICollectionViewCell {
     var didSaveItemHandler: ((Item) -> Void)?
     var showNameInputAlertHandler: (() -> Void)?
 
+    var isInEditingMode: Bool = false {
+        didSet {
+            if isInEditingMode == false {
+                backgroundColor = .clear
+            }
+            textField.isEnabled = !isInEditingMode
+        }
+    }
+    override var isSelected: Bool {
+        didSet {
+            if isSelected && isInEditingMode {
+                backgroundColor = .red
+            } else {
+                backgroundColor = .clear
+            }
+        }
+    }
+
     private var item: Item!
 
     private var isChecked: Bool = false {
