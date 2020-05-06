@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		006FFFAC246161BF003A4882 /* ListShareService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006FFFAB246161BF003A4882 /* ListShareService.swift */; };
 		007571B2245EB6A400024F1D /* ListItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 007571B1245EB6A400024F1D /* ListItemCell.swift */; };
 		007571B4245EB72B00024F1D /* ListItemCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 007571B3245EB72B00024F1D /* ListItemCell.xib */; };
 		0078F71E245FA7DA0026320D /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0078F71D245FA7DA0026320D /* Item.swift */; };
@@ -38,6 +39,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		006FFFAB246161BF003A4882 /* ListShareService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListShareService.swift; sourceTree = "<group>"; };
 		007571B1245EB6A400024F1D /* ListItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListItemCell.swift; sourceTree = "<group>"; };
 		007571B3245EB72B00024F1D /* ListItemCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ListItemCell.xib; sourceTree = "<group>"; };
 		0078F71D245FA7DA0026320D /* Item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; };
@@ -108,6 +110,7 @@
 				00AB4C03245C54D300B51E14 /* AppDelegate.swift */,
 				00AB4C05245C54D300B51E14 /* SceneDelegate.swift */,
 				00AB4C07245C54D300B51E14 /* ViewController.swift */,
+				006FFFAB246161BF003A4882 /* ListShareService.swift */,
 				007571B1245EB6A400024F1D /* ListItemCell.swift */,
 				0078F71D245FA7DA0026320D /* Item.swift */,
 				007571B3245EB72B00024F1D /* ListItemCell.xib */,
@@ -272,6 +275,7 @@
 				0078F71E245FA7DA0026320D /* Item.swift in Sources */,
 				007571B2245EB6A400024F1D /* ListItemCell.swift in Sources */,
 				00AB4C08245C54D300B51E14 /* ViewController.swift in Sources */,
+				006FFFAC246161BF003A4882 /* ListShareService.swift in Sources */,
 				00AB4C04245C54D300B51E14 /* AppDelegate.swift in Sources */,
 				00AB4C06245C54D300B51E14 /* SceneDelegate.swift in Sources */,
 			);

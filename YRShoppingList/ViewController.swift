@@ -13,6 +13,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var deleteButton: UIBarButtonItem!
 
+    let shareService = ListShareService()
     var items = [Item]()
 
     // for debug
@@ -47,6 +48,8 @@ class ViewController: UIViewController {
         collectionView.dragInteractionEnabled = true
         collectionView.dragDelegate = self
         collectionView.dropDelegate = self
+
+        shareService.delegate = self
 
         let notificationCenter = NotificationCenter.default
         notificationCenter.addObserver(self, selector: #selector(adjustForKeyboard), name: UIResponder.keyboardWillHideNotification, object: nil)
@@ -83,6 +86,9 @@ class ViewController: UIViewController {
         }
     }
 
+    @IBAction func shareList(_ sender: Any) {
+        shareService.searchForPeer()
+    }
 }
 
 extension ViewController: UICollectionViewDataSource {
@@ -201,6 +207,37 @@ extension ViewController: UICollectionViewDropDelegate {
 
 }
 
+extension ViewController: ListShareServiceDelegate {
+
+    func didConnectWithPeerDeviceToSend(names: [String]) {
+        DispatchQueue.main.async {
+            self.showSharePeerConnectedAlert(peers: names, isToSend: true) {
+                guard let data = try? PropertyListEncoder().encode(self.items) else { return }
+                self.shareService.send(list: data)
+            }
+        }
+    }
+
+    func didConnectWithPeerDevice(names: [String]) {
+        DispatchQueue.main.async {
+            self.showSharePeerConnectedAlert(peers: names)
+        }
+    }
+
+    func didReceiveData(_ data: Data) {
+        guard let items = try? PropertyListDecoder().decode([Item].self, from: data) else { return }
+        print("received items: \(items)")
+        DispatchQueue.main.async {
+            self.showReceivedListAlert { [weak self] in
+                guard let self = self else { return }
+                self.items = items
+
+                self.collectionView.reloadData()
+            }
+        }
+    }
+}
+
 extension ViewController {
 
     private func showNeedToInputNameAlert() {
@@ -209,6 +246,42 @@ extension ViewController {
             (action: UIAlertAction!) in
         })
         alert.addAction(cancel)
+        self.present(alert, animated: true, completion: nil)
+    }
+
+    private func showSharePeerConnectedAlert(peers names: [String], isToSend: Bool = false, okHandler: (() -> Void)? = nil) {
+        let namesText = names.reduce("", { result, string -> String in
+            return result + "\n" + string
+        })
+        let title = isToSend ? "相手が見つかりました。リストを共有しますか？": "相手が見つかりました。"
+        let alert = UIAlertController(title: title, message: namesText, preferredStyle: UIAlertController.Style.alert)
+        let ok = UIAlertAction(title: "OK", style: UIAlertAction.Style.default) { action in
+            print("OK")
+            okHandler?()
+        }
+        let cancelButtonTitle = isToSend ? "Cancel": "OK"
+        let cancel = UIAlertAction(title: cancelButtonTitle, style: UIAlertAction.Style.cancel, handler: {
+            (action: UIAlertAction!) in
+            print("Cancel")
+        })
+        if isToSend {
+            alert.addAction(ok)
+        }
+        alert.addAction(cancel)
+        self.present(alert, animated: true, completion: nil)
+    }
+
+    private func showReceivedListAlert(okHandler: (() -> Void)? = nil) {
+        let alert = UIAlertController(title:"リストが共有されました", message: "受け取りますか", preferredStyle: UIAlertController.Style.alert)
+        let cancel = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: {
+            (action: UIAlertAction!) in
+        })
+        let ok = UIAlertAction(title: "OK", style: UIAlertAction.Style.default) { action in
+            print("OK")
+            okHandler?()
+        }
+        alert.addAction(cancel)
+        alert.addAction(ok)
         self.present(alert, animated: true, completion: nil)
     }
 
