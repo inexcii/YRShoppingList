@@ -7,3 +7,6 @@ Major:
 - [ ] shopping items can be re-ordered on the list
 - [ ] every item can be showed on/off with a straight-line-in-the-middle by tapping on the checkbox on the left of the cell
 - [ ] the whole list can be able to be shared with another iOS device
+
+- [ ] wished
+- [X] implemented
