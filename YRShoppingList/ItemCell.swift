@@ -1,37 +1,25 @@
 //
-//  ListItemCell.swift
+//  ItemCell.swift
 //  YRShoppingList
 //
-//  Created by Yuan Zhou on 2020/05/03.
+//  Created by Yuan Zhou on 2020/05/07.
 //  Copyright © 2020 ZhouyuanWork, Inc. All rights reserved.
 //
 
 import UIKit
 
-class ListItemCell: UICollectionViewCell {
+class ItemCell: UITableViewCell {
 
-    @IBOutlet private weak var checkButton: UIButton!
-    @IBOutlet private weak var quantityLabel: UILabel!
-    @IBOutlet private weak var textField: UITextField!
+    @IBOutlet weak var checkButton: UIButton!
+    @IBOutlet weak var textField: UITextField!
+    @IBOutlet weak var quantityLabel: UILabel!
 
     var didSaveItemHandler: ((Item) -> Void)?
     var showNameInputAlertHandler: (() -> Void)?
 
     var isInEditingMode: Bool = false {
         didSet {
-            if isInEditingMode == false {
-                backgroundColor = .clear
-            }
             textField.isEnabled = !isInEditingMode
-        }
-    }
-    override var isSelected: Bool {
-        didSet {
-            if isSelected && isInEditingMode {
-                backgroundColor = .red
-            } else {
-                backgroundColor = .clear
-            }
         }
     }
 
@@ -58,12 +46,6 @@ class ListItemCell: UICollectionViewCell {
             quantityLabel.text = "\(quantity)"
             item?.quantity = quantity
         }
-    }
-
-    override func awakeFromNib() {
-        super.awakeFromNib()
-
-
     }
 
     override func prepareForReuse() {
@@ -96,18 +78,6 @@ class ListItemCell: UICollectionViewCell {
         didSaveItemHandler?(self.item)
     }
 
-    @IBAction func plusButtonTapped(_ sender: Any) {
-        guard self.item.name.isEmpty == false else {
-            showNameInputAlertHandler?()
-            return
-        }
-
-        quantity += 1
-        quantityLabel.text = "\(quantity)"
-
-        didSaveItemHandler?(self.item)
-    }
-
     @IBAction func minusButtonTapped(_ sender: Any) {
         guard self.item.name.isEmpty == false else {
             showNameInputAlertHandler?()
@@ -121,9 +91,20 @@ class ListItemCell: UICollectionViewCell {
         didSaveItemHandler?(self.item)
     }
 
+    @IBAction func plusButtonTapped(_ sender: Any) {
+        guard self.item.name.isEmpty == false else {
+            showNameInputAlertHandler?()
+            return
+        }
+
+        quantity += 1
+        quantityLabel.text = "\(quantity)"
+
+        didSaveItemHandler?(self.item)
+    }
 }
 
-extension ListItemCell: UITextFieldDelegate {
+extension ItemCell: UITextFieldDelegate {
 
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         resignKeyboardAndSaveName()
@@ -132,7 +113,7 @@ extension ListItemCell: UITextFieldDelegate {
     }
 }
 
-extension ListItemCell {
+extension ItemCell {
 
     private func resignKeyboardAndSaveName() {
         textField.resignFirstResponder()
@@ -141,5 +122,17 @@ extension ListItemCell {
             return
         }
         item?.name = name
+    }
+}
+
+extension String {
+    func strikeThroughStyle() -> NSAttributedString {
+        let attributeString =  NSMutableAttributedString(string: self)
+        attributeString.addAttributes([
+            NSAttributedString.Key.foregroundColor: UIColor.gray,
+            NSAttributedString.Key.strikethroughStyle: NSUnderlineStyle.single.rawValue,
+            NSAttributedString.Key.strikethroughColor: UIColor.gray
+        ], range: NSMakeRange(0,attributeString.length))
+        return attributeString
     }
 }
