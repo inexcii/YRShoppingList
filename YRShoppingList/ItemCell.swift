@@ -106,9 +106,13 @@ class ItemCell: UITableViewCell {
 
 extension ItemCell: UITextFieldDelegate {
 
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+    func textFieldDidEndEditing(_ textField: UITextField, reason: UITextField.DidEndEditingReason) {
         resignKeyboardAndSaveName()
         didSaveItemHandler?(self.item)
+    }
+
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
         return true
     }
 }
@@ -116,7 +120,9 @@ extension ItemCell: UITextFieldDelegate {
 extension ItemCell {
 
     private func resignKeyboardAndSaveName() {
-        textField.resignFirstResponder()
+        if textField.canResignFirstResponder {
+            textField.resignFirstResponder()
+        }
         guard let name = textField.text else {
             print("not save name with nil in the textField")
             return
