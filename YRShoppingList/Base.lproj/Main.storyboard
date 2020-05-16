@@ -65,6 +65,49 @@
             </objects>
             <point key="canvasLocation" x="1329" y="190"/>
         </scene>
+        <!--Thumbnail Detail View Controller-->
+        <scene sceneID="oBr-sH-Uop">
+            <objects>
+                <viewController storyboardIdentifier="ThumbnailDetailViewController" id="lW7-95-DuI" customClass="ThumbnailDetailViewController" customModule="YRShoppingList" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Utj-bM-qbI">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="nv7-4B-FLV">
+                                <rect key="frame" x="0.0" y="44" width="414" height="818"/>
+                            </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tq9-4t-uvk">
+                                <rect key="frame" x="354" y="44" width="60" height="60"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="60" id="5e8-Ed-Y50"/>
+                                    <constraint firstAttribute="width" constant="60" id="sav-KA-qXp"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="32"/>
+                                <state key="normal" title="X"/>
+                                <connections>
+                                    <action selector="closeButtonTapped:" destination="lW7-95-DuI" eventType="touchUpInside" id="4ol-1L-T2q"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <constraints>
+                            <constraint firstItem="0jm-Mb-OUU" firstAttribute="trailing" secondItem="tq9-4t-uvk" secondAttribute="trailing" id="0MN-Ui-NeR"/>
+                            <constraint firstItem="0jm-Mb-OUU" firstAttribute="trailing" secondItem="nv7-4B-FLV" secondAttribute="trailing" id="LAX-vv-2qQ"/>
+                            <constraint firstItem="0jm-Mb-OUU" firstAttribute="bottom" secondItem="nv7-4B-FLV" secondAttribute="bottom" id="YNK-G2-QVM"/>
+                            <constraint firstItem="nv7-4B-FLV" firstAttribute="top" secondItem="0jm-Mb-OUU" secondAttribute="top" id="ilK-WD-puZ"/>
+                            <constraint firstItem="tq9-4t-uvk" firstAttribute="top" secondItem="0jm-Mb-OUU" secondAttribute="top" id="pJ4-kD-JUf"/>
+                            <constraint firstItem="nv7-4B-FLV" firstAttribute="leading" secondItem="0jm-Mb-OUU" secondAttribute="leading" id="xiV-gR-6Z1"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="0jm-Mb-OUU"/>
+                    </view>
+                    <connections>
+                        <outlet property="imageView" destination="nv7-4B-FLV" id="1bX-xE-zRw"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="7Xp-yW-Csj" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1329" y="868"/>
+        </scene>
         <!--リスト-->
         <scene sceneID="OaN-SE-tc0">
             <objects>
@@ -114,7 +157,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="NgG-6m-ynU" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-391" y="190"/>
+            <point key="canvasLocation" x="-83" y="-236"/>
         </scene>
     </scenes>
 </document>

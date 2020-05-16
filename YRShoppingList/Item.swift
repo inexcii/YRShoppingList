@@ -13,6 +13,7 @@ struct Item: Equatable, Hashable, Codable {
     var name: String
     var isChecked: Bool
     var quantity: Int
+    var thumbnailData: Data?
 
     static func == (lhs: Item, rhs: Item) -> Bool {
         return lhs.name == rhs.name

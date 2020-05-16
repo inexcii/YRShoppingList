@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import AVFoundation
 
 class ShoppingListViewController: UITableViewController {
 
@@ -16,6 +17,8 @@ class ShoppingListViewController: UITableViewController {
             saveData()
         }
     }
+
+    private var selectedThumbnailCellIndex: IndexPath = IndexPath()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -69,9 +72,11 @@ extension ShoppingListViewController {
             guard let self = self, !savedItem.name.isEmpty else { return }
             let firstIndex = self.items.firstIndex { $0 == item }
             if let index = firstIndex, index >= 0 {
+                // edit item
                 self.items[index] = savedItem
                 tableView.reloadRows(at: [indexPath], with: .automatic)
             } else {
+                // add item
                 self.items.append(savedItem)
                 tableView.reloadData()
             }
@@ -79,6 +84,48 @@ extension ShoppingListViewController {
         cell.showNameInputAlertHandler = { [weak self] in
             guard let self = self else { return }
             self.showNeedToInputNameAlert()
+        }
+        cell.didTapThumbnail = { hasImage in
+            if !hasImage {
+                let src = UIImagePickerController.SourceType.photoLibrary
+                guard UIImagePickerController.isSourceTypeAvailable(src)
+                    else { return }
+                guard let arr = UIImagePickerController.availableMediaTypes(for:src)
+                    else { return }
+                let picker = UIImagePickerController()
+                picker.sourceType = src
+                picker.mediaTypes = arr
+                picker.delegate = self
+                picker.videoExportPreset = AVAssetExportPresetLowQuality
+                self.present(picker, animated: true, completion: nil)
+            } else {
+                let menu = UIAlertController(title: nil, message: "実行項目", preferredStyle: .actionSheet)
+                let check = UIAlertAction(title: "確認", style: .default) { action in
+                    guard let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "ThumbnailDetailViewController") as? ThumbnailDetailViewController,
+                        let index = self.items.firstIndex(of: cell.item),
+                        let imageData = self.items[index].thumbnailData else { return }
+                    vc.imageData = imageData
+                    self.present(vc, animated: true, completion: nil)
+                }
+                let delete = UIAlertAction(title: "削除", style: .default) { [weak self] action in
+                    guard let self = self, let index = self.items.firstIndex(of: cell.item) else { return }
+                    self.items.removeAll { item -> Bool in
+                        item == cell.item
+                    }
+                    var newItem = cell.item
+                    newItem?.thumbnailData = nil
+                    guard let item = newItem else { return }
+                    self.items.insert(item, at: index)
+                    cell.thumbnail.setBackgroundImage(nil, for: .normal)
+                }
+                let cancel = UIAlertAction(title: "キャンセル", style: .cancel, handler: nil)
+                menu.addAction(check)
+                menu.addAction(delete)
+                menu.addAction(cancel)
+                self.present(menu, animated: true, completion: nil)
+            }
+
+            self.selectedThumbnailCellIndex = indexPath
         }
 
         cell.isInEditingMode = isEditing
@@ -143,6 +190,32 @@ extension ShoppingListViewController: ListShareServiceDelegate {
     }
 }
 
+extension ShoppingListViewController: UIImagePickerControllerDelegate {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        guard let image = info[.originalImage] as? UIImage,
+            let cell = tableView.cellForRow(at: self.selectedThumbnailCellIndex) as? ItemCell else {
+            return
+        }
+
+        // replace item data in item list
+        let index = self.selectedThumbnailCellIndex.row
+        let item = items[index]
+        let newItem = Item(name: item.name,
+                           isChecked: item.isChecked,
+                           quantity: item.quantity,
+                           thumbnailData: image.pngData())
+        items.remove(at: index)
+        items.insert(newItem, at: index)
+
+        self.dismiss(animated:true) {
+        // do something with the chosen item here
+            cell.thumbnail.setBackgroundImage(image, for: .normal)
+        }
+    }
+}
+
+extension ShoppingListViewController: UINavigationControllerDelegate {}
+
 extension ShoppingListViewController {
 
     private func showNeedToInputNameAlert() {
@@ -188,6 +261,10 @@ extension ShoppingListViewController {
         alert.addAction(cancel)
         alert.addAction(ok)
         self.present(alert, animated: true, completion: nil)
+    }
+
+    private func showThumbnailActionSheet() {
+
     }
 }
 

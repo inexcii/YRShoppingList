@@ -27,13 +27,24 @@
                         </connections>
                     </button>
                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="YKY-uV-3bO" userLabel="TextField">
-                        <rect key="frame" x="50" y="8" width="242" height="51"/>
+                        <rect key="frame" x="50" y="8" width="202" height="51"/>
                         <fontDescription key="fontDescription" type="system" pointSize="18"/>
                         <textInputTraits key="textInputTraits" returnKeyType="done"/>
                         <connections>
                             <outlet property="delegate" destination="afG-r9-tjd" id="tAJ-GA-rsb"/>
                         </connections>
                     </textField>
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wTo-11-TF0">
+                        <rect key="frame" x="257" y="11.5" width="44" height="44"/>
+                        <color key="backgroundColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstAttribute="width" secondItem="wTo-11-TF0" secondAttribute="height" multiplier="1:1" id="CxX-6Y-k5x"/>
+                            <constraint firstAttribute="width" constant="44" id="WS9-6X-r7v"/>
+                        </constraints>
+                        <connections>
+                            <action selector="thumbnailButtonTapped:" destination="afG-r9-tjd" eventType="touchUpInside" id="lfO-Gc-Sep"/>
+                        </connections>
+                    </button>
                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Qpu-3J-G0O" userLabel="-">
                         <rect key="frame" x="306" y="25" width="34" height="17.5"/>
                         <constraints>
@@ -64,10 +75,12 @@
                     </button>
                 </subviews>
                 <constraints>
-                    <constraint firstItem="Qpu-3J-G0O" firstAttribute="leading" secondItem="YKY-uV-3bO" secondAttribute="trailing" constant="14" id="6l3-5F-bsE"/>
+                    <constraint firstItem="Qpu-3J-G0O" firstAttribute="leading" secondItem="wTo-11-TF0" secondAttribute="trailing" constant="5" id="APP-MZ-5qV"/>
                     <constraint firstItem="kVf-0D-NNO" firstAttribute="centerY" secondItem="u6H-sw-k0T" secondAttribute="centerY" id="EYM-1i-CFC"/>
                     <constraint firstAttribute="trailing" secondItem="kVf-0D-NNO" secondAttribute="trailing" constant="8" id="JRE-49-tqJ"/>
+                    <constraint firstItem="wTo-11-TF0" firstAttribute="centerY" secondItem="YKY-uV-3bO" secondAttribute="centerY" id="Pgg-Ds-zqy"/>
                     <constraint firstItem="m7n-Kc-zH9" firstAttribute="centerY" secondItem="kVf-0D-NNO" secondAttribute="centerY" id="QyZ-XC-BLk"/>
+                    <constraint firstItem="wTo-11-TF0" firstAttribute="leading" secondItem="YKY-uV-3bO" secondAttribute="trailing" constant="5" id="Wxh-ev-2nZ"/>
                     <constraint firstItem="Qpu-3J-G0O" firstAttribute="centerY" secondItem="kVf-0D-NNO" secondAttribute="centerY" id="aYv-aO-b59"/>
                     <constraint firstItem="u6H-sw-k0T" firstAttribute="centerY" secondItem="ev2-tS-E4n" secondAttribute="centerY" id="cst-yl-xMS"/>
                     <constraint firstItem="YKY-uV-3bO" firstAttribute="top" secondItem="ev2-tS-E4n" secondAttribute="top" constant="8" id="f2C-6M-LwU"/>
@@ -83,6 +96,7 @@
                 <outlet property="checkButton" destination="u6H-sw-k0T" id="Lo4-9L-6VK"/>
                 <outlet property="quantityLabel" destination="m7n-Kc-zH9" id="kr3-2I-Ca6"/>
                 <outlet property="textField" destination="YKY-uV-3bO" id="3Ef-Wa-b0m"/>
+                <outlet property="thumbnail" destination="wTo-11-TF0" id="Zc1-1r-iGb"/>
             </connections>
             <point key="canvasLocation" x="126.08695652173914" y="-221.31696428571428"/>
         </tableViewCell>

@@ -12,9 +12,11 @@ class ItemCell: UITableViewCell {
 
     @IBOutlet weak var checkButton: UIButton!
     @IBOutlet weak var textField: UITextField!
+    @IBOutlet weak var thumbnail: UIButton!
     @IBOutlet weak var quantityLabel: UILabel!
 
     var didSaveItemHandler: ((Item) -> Void)?
+    var didTapThumbnail: ((Bool) -> Void)?
     var showNameInputAlertHandler: (() -> Void)?
 
     var isInEditingMode: Bool = false {
@@ -23,7 +25,7 @@ class ItemCell: UITableViewCell {
         }
     }
 
-    private var item: Item!
+    private(set) var item: Item!
 
     private var isChecked: Bool = false {
         didSet {
@@ -54,12 +56,18 @@ class ItemCell: UITableViewCell {
         textField.text = ""
         quantity = 1
         isChecked = false
+        thumbnail.setBackgroundImage(nil, for: .normal)
     }
 
     func configure(item: Item) {
         textField.text = item.name
         quantity = item.quantity
         isChecked = item.isChecked
+
+        if let data = item.thumbnailData, let image = UIImage(data: data) {
+            thumbnail.setBackgroundImage(image, for: .normal)
+        }
+
         self.item = item
     }
 
@@ -102,6 +110,11 @@ class ItemCell: UITableViewCell {
 
         didSaveItemHandler?(self.item)
     }
+
+    @IBAction func thumbnailButtonTapped(_ sender: Any) {
+        didTapThumbnail?(thumbnail.backgroundImage(for: .normal) != nil)
+    }
+
 }
 
 extension ItemCell: UITextFieldDelegate {
