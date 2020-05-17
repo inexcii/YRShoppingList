@@ -94,6 +94,8 @@
             </tableViewCellContentView>
             <connections>
                 <outlet property="checkButton" destination="u6H-sw-k0T" id="Lo4-9L-6VK"/>
+                <outlet property="minusButton" destination="Qpu-3J-G0O" id="Wgd-Ex-on9"/>
+                <outlet property="plusButton" destination="kVf-0D-NNO" id="WJT-9o-ofo"/>
                 <outlet property="quantityLabel" destination="m7n-Kc-zH9" id="kr3-2I-Ca6"/>
                 <outlet property="textField" destination="YKY-uV-3bO" id="3Ef-Wa-b0m"/>
                 <outlet property="thumbnail" destination="wTo-11-TF0" id="Zc1-1r-iGb"/>

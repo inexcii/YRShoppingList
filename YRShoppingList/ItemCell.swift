@@ -14,6 +14,8 @@ class ItemCell: UITableViewCell {
     @IBOutlet weak var textField: UITextField!
     @IBOutlet weak var thumbnail: UIButton!
     @IBOutlet weak var quantityLabel: UILabel!
+    @IBOutlet weak var plusButton: UIButton!
+    @IBOutlet weak var minusButton: UIButton!
 
     var didSaveItemHandler: ((Item) -> Void)?
     var didTapThumbnail: ((Bool) -> Void)?
@@ -22,6 +24,9 @@ class ItemCell: UITableViewCell {
     var isInEditingMode: Bool = false {
         didSet {
             textField.isEnabled = !isInEditingMode
+            thumbnail.isEnabled = !isInEditingMode
+            plusButton.isEnabled = !isInEditingMode
+            minusButton.isEnabled = !isInEditingMode
         }
     }
 
@@ -64,8 +69,10 @@ class ItemCell: UITableViewCell {
         quantity = item.quantity
         isChecked = item.isChecked
 
-        if let data = item.thumbnailData, let image = UIImage(data: data) {
-            thumbnail.setBackgroundImage(image, for: .normal)
+        DispatchQueue.main.async {
+            if let data = item.thumbnailData, let image = UIImage(data: data) {
+                self.thumbnail.setBackgroundImage(image, for: .normal)
+            }
         }
 
         self.item = item

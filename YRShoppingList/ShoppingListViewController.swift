@@ -28,6 +28,7 @@ class ShoppingListViewController: UITableViewController {
         self.navigationItem.leftBarButtonItem = self.editButtonItem
         tableView.register(UINib(nibName: "ItemCell", bundle: nil), forCellReuseIdentifier: "Cell")
 
+//        saveData()
         items = getData()
     }
 
@@ -96,7 +97,7 @@ extension ShoppingListViewController {
                 picker.sourceType = src
                 picker.mediaTypes = arr
                 picker.delegate = self
-                picker.videoExportPreset = AVAssetExportPresetLowQuality
+                picker.videoExportPreset = AVAssetExportPreset640x480
                 self.present(picker, animated: true, completion: nil)
             } else {
                 let menu = UIAlertController(title: nil, message: "実行項目", preferredStyle: .actionSheet)
@@ -197,19 +198,21 @@ extension ShoppingListViewController: UIImagePickerControllerDelegate {
             return
         }
 
+        guard let resizedImage = image.resized(for: CGSize(width: 50, height: 88.88)) else { return }
+
         // replace item data in item list
         let index = self.selectedThumbnailCellIndex.row
         let item = items[index]
         let newItem = Item(name: item.name,
                            isChecked: item.isChecked,
                            quantity: item.quantity,
-                           thumbnailData: image.pngData())
+                           thumbnailData: resizedImage.pngData())
         items.remove(at: index)
         items.insert(newItem, at: index)
 
         self.dismiss(animated:true) {
         // do something with the chosen item here
-            cell.thumbnail.setBackgroundImage(image, for: .normal)
+            cell.thumbnail.setBackgroundImage(resizedImage, for: .normal)
         }
     }
 }
@@ -263,21 +266,41 @@ extension ShoppingListViewController {
         self.present(alert, animated: true, completion: nil)
     }
 
-    private func showThumbnailActionSheet() {
-
+    private func showAlert(title: String? = nil, message: String? = nil) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let cancel = UIAlertAction(title: title, style: .cancel, handler: nil)
+        alert.addAction(cancel)
+        self.present(alert, animated: true, completion: nil)
     }
 }
 
 extension ShoppingListViewController {
 
     private func saveData() {
-        UserDefaults.standard.set(try? PropertyListEncoder().encode(items), forKey: "UserDefaults_items")
-        UserDefaults.standard.synchronize()
+        do {
+            let data = try PropertyListEncoder().encode(items)
+            UserDefaults.standard.set(data, forKey: "UserDefaults_items")
+            UserDefaults.standard.synchronize()
+        } catch {
+            print("error when saving items: \(error)")
+            showAlert(title: "error saving data")
+        }
+
     }
     private func getData() -> [Item] {
         guard let decoded = UserDefaults.standard.object(forKey: "UserDefaults_items") as? Data,
             let items = try? PropertyListDecoder().decode([Item].self, from: decoded)
             else { return [Item]() }
         return items
+    }
+}
+
+extension UIImage {
+
+    func resized(for size: CGSize) -> UIImage? {
+        let renderer = UIGraphicsImageRenderer(size: size)
+        return renderer.image { context in
+            self.draw(in: CGRect(origin: .zero, size: size))
+        }
     }
 }
