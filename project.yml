@@ -1,0 +1,37 @@
+name: YRShoppingList
+
+targets: 
+  
+  YRShoppingList:
+    type: application
+    platform: iOS
+    settings:
+      IPHONEOS_DEPLOYMENT_TARGET: 13.0
+      PRODUCT_BUNDLE_IDENTIFIER: work.zhouyuan.YRShoppingList
+    sources:
+      - YRShoppingList
+    attributes:
+      DevelopmentTeam: 58F85N59D3
+    
+  YRShoppingListTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources: 
+      - YRShoppingListTests
+    settings:
+      IPHONEOS_DEPLOYMENT_TARGET: 13.0
+      PRODUCT_BUNDLE_IDENTIFIER: work.zhouyuan.YRShoppingListTests
+    attributes:
+      DevelopmentTeam: 58F85N59D3
+
+
+  YRShoppingListUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - YRShoppingListUITests
+    settings:
+      IPHONEOS_DEPLOYMENT_TARGET: 13.0
+      PRODUCT_BUNDLE_IDENTIFIER: work.zhouyuan.YRShoppingListUITests
+    attributes:
+      DevelopmentTeam: 58F85N59D3
